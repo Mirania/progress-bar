@@ -1,5 +1,10 @@
 import { format } from '@mirania/console-colors';
 
+/**
+ * A customizable progress bar.
+ * 
+ * ![](https://i.imgur.com/wk0e3jT.gif)
+ */
 export class ProgressBar {
 
     private length: number;
@@ -11,6 +16,21 @@ export class ProgressBar {
     private color: Color;
     private colorOnCompletion: Color;
 
+    /**
+     * Create a customizable progress bar.
+     * 
+     * ![](https://i.imgur.com/wk0e3jT.gif)
+     * 
+     * @param length - inner bar size.
+     * @param options - customization options.
+     *      - `fill` - character that represent progress cells. Default is `=`
+     *      - `halfSteps` - provides a smoother progression. Default is `false`
+     *      - `halfStepFill` - character that represents a half-filled progress cell. Default is `-`
+     *      - `showPercentage` - `make(progress)` returns a string containing the percentage, e.g. `52%`. Default is `true`
+     *      - `percentageDecimals` - amount of decimals to be used when displaying the percentage. Default is `0`
+     *      - `color` - progress bar color. Default is `Color.Default`
+     *      - `colorOnCompletion` - progress bar color when at 100%. Default is `Color.Default`
+     */
     constructor(length: number, options?: {
         fill?: string,
         halfSteps?: boolean,
@@ -30,8 +50,13 @@ export class ProgressBar {
         this.colorOnCompletion = options?.colorOnCompletion ?? Color.Default;
     }
 
-    public make(value: number): string {
-        let ratio = value>1 ? 1 : value<0 ? 0 : value;
+    /**
+     * Generates a string representation of the progress bar.
+     * 
+     * @param progress - a value between 0 and 1.
+     */
+    public make(progress: number): string {
+        let ratio = progress>1 ? 1 : progress<0 ? 0 : progress;
         let amount = Math.floor(ratio * this.length);
         let color = ratio===1 ? this.colorOnCompletion : this.color;
 
@@ -49,6 +74,11 @@ export class ProgressBar {
     }
 }
 
+/**
+ * A customizable progress spinner.
+ * 
+ * ![](https://i.imgur.com/0FekYSZ.gif)
+ */
 export class ProgressSpinner {
 
     private frame: number;
@@ -57,6 +87,17 @@ export class ProgressSpinner {
     private color: Color;
     private colorOnCompletion: Color;
 
+    /**
+     * Create a customizable progress spinner.
+     * 
+     * ![](https://i.imgur.com/0FekYSZ.gif)
+     * 
+     * @param options - customization options.
+     *      - `showPercentage` - `make(progress)` returns a string containing the percentage, e.g. `52%`. Default is `true`
+     *      - `percentageDecimals` - amount of decimals to be used when displaying the percentage. Default is `0`
+     *      - `color` - progress bar color. Default is `Color.Default`
+     *      - `colorOnCompletion` - progress bar color when at 100%. Default is `Color.Default`
+     */
     constructor(options?: {
         showPercentage?: boolean,
         percentageDecimals?: number,
@@ -70,14 +111,19 @@ export class ProgressSpinner {
         this.colorOnCompletion = options?.colorOnCompletion ?? Color.Default;
     }
 
-    public make(value?: number): string {        
+    /**
+     * Generates a string representation of the progress spinner.
+     * 
+     * @param progress - a value between 0 and 1. If not provided, no percentage will be shown.
+     */
+    public make(progress?: number): string {        
         let spinner = this.frame===0 ? "|" : this.frame===1 ? "/" : this.frame===2 ? "-" : "\\";
         this.frame = (this.frame+1) % 4;
 
-        if (value===null || value===undefined) {
+        if (progress===null || progress===undefined) {
             return `${addColor(spinner, this.color)}`;
         } else {
-            let ratio = value > 1 ? 1 : value < 0 ? 0 : value;
+            let ratio = progress > 1 ? 1 : progress < 0 ? 0 : progress;
             let color = ratio === 1 ? this.colorOnCompletion : this.color;
             return `${addColor(ratio===1 ? "!" : spinner, color)}`+
                    `${this.showPercentage ? ` ${(ratio*100).toFixed(this.percentageDecimals)}%` : ""}`;
@@ -85,6 +131,15 @@ export class ProgressSpinner {
     }
 }
 
+/**
+ * An enum used for progress bar/spinner customization.
+ * 
+ * Possible values include `Color.Default`, `Color.Black`, 
+ * `Color.Red`, `Color.Green`, `Color.Gold`, `Color.Blue`, 
+ * `Color.Magenta`, `Color.Cyan`, `Color.White`, `Color.Grey`, 
+ * `Color.Gray`, `Color.Ruby`, `Color.Leaf`, `Color.Yellow`, 
+ * `Color.Ocean`, `Color.Pink`, `Color.Sky`, `Color.Light`
+ */
 export enum Color {
     Default, Black, Red, Green, Gold, Blue, Magenta, Cyan, White, 
     Grey, Gray, Ruby, Leaf, Yellow, Ocean, Pink, Sky, Light
